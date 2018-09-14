@@ -1,133 +1,142 @@
+package Bai1;
 
-
-import java.util.Scanner;
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 public class bai1 {
 
     public static void main(String[] args) {
         String[][] map = {
-                {"*", "*", "*", "*"},
-                {"*", "*", "*", "*"},
-                {"*", "*", "P", "*"},
-                {"*", "*", "*", "*"}
+                {"*", "*", "*", "*",},
+                {"*", "*", "*", "*",},
+                {"*", "*", "*", "*",},
+                {"*", "*", "*", "*",}
         };
+
         Scanner scanner = new Scanner(System.in);
 
-        Random random = new Random();
-        random.nextInt(4);
-        int playerX = 2;
-        int playerY = 2;
-        int e1x = random.nextInt(4);
-        int e1y = random.nextInt(4);
-        int e2x = random.nextInt(4);
-        int e2y = random.nextInt(4);
-        int gx = random.nextInt(4);
-        int gy = random.nextInt(4);
-        while ((e1x == e2x && e1y == e2y)
-                || (e2x == gx && e2y == gy)
-                || (e1x == gx && e1y == gy)
-                || (playerX == gx && playerY == gy)
-                || (playerX == e1x && playerY == e1y)
-                || (playerX == e2x && playerY == e2y)) {
-            e1x = random.nextInt(4);
-            e1y = random.nextInt(4);
-            e2x = random.nextInt(4);
-            e2y = random.nextInt(4);
-            gx = random.nextInt(4);
-            gy = random.nextInt(4);
-        }
-        map[e1x][e1y] = "E";
-        map[e2x][e2y] = "E";
-        map[gx][gy] = "G";
+        int count = 2;
+
+        ArrayList<Point> points = new ArrayList<>();
+        for (int i = 0; i < map.length; i++)
+            for (int j = 0; j < map.length; j++)
+                points.add(new Point(i, j));
+
+        Point point = random(points);
+
+        int playerX = point.x;
+        int playerY = point.y;
+
+        point = random(points);
+
+        int enemyFirstX = point.x;
+        int enemyFirstY = point.y;
+
+        point = random(points);
+
+        int enemySecondX = point.x;
+        int enemySecondY = point.y;
+
+        point = random(points);
+        int foodFirstX = point.x;
+        int foodFirstY = point.y;
+
+        point = random(points);
+        int foodSecondX = point.x;
+        int foodSecondY = point.y;
+
+        map[enemyFirstX][enemyFirstY] = "G";
+        map[playerX][playerY] = "P";
+        map[enemySecondX][enemySecondY] = "G";
+        map[foodFirstX][foodFirstY] = "F";
+        map[foodSecondX][foodSecondY] = "F";
+
         while (true) {
             for (int i = 0; i < map.length; i++) {
                 for (int j = 0; j < map[i].length; j++) {
-                    System.out.print(map[j][i] + "  ");
+                    System.out.print(map[j][i] + " ");
                 }
                 System.out.println();
-
             }
 
             System.out.println("Nhap ky tu ban phim: ");
             String key = scanner.next();
+
             map[playerX][playerY] = "*";
-            map[e1x][e1y] = "*";
-            map[e2x][e2y] = "*";
-            map[gx][gy] = "G";
 
             switch (key) {
                 case "w":
                     playerY -= 1;
-                    e1y -= 1;
-                    e2x += 1;
                     break;
                 case "s":
                     playerY += 1;
-                    e1y -= 1;
-                    e2x += 1;
                     break;
                 case "a":
                     playerX -= 1;
-                    e1y -= 1;
-                    e2x += 1;
                     break;
                 case "d":
                     playerX += 1;
-                    e1y -= 1;
-                    e2x += 1;
                     break;
             }
-            if (playerY == -1) {
-                playerY = map.length - 1;
+            if (playerY == -1) playerY = map.length - 1;
+            if (playerY == map.length) playerY = 0;
+            if (playerX == -1) playerX = map.length - 1;
+            if (playerX == map.length) playerX = 0;
+            if (playerX == foodFirstX && playerY == foodFirstY) {
+                foodFirstX = 0;
+                foodFirstY = 0;
             }
-            if (playerY == map.length) {
-                playerY = 0;
+            if (playerX == foodSecondX && playerY == foodSecondY) {
+                foodSecondX = 0;
+                foodSecondY = 0;
             }
-            if (playerX == -1) {
-                playerX = map.length - 1;
-            }
-            if (playerX == map.length) {
-                playerX = 0;
-            }
-            if (e1x == -1) {
-                e1x = map.length - 1;
-            }
-            if (e1x == map.length) {
-                e1x = 0;
-            }
-            if (e2x == -1) {
-                e2x = map.length - 1;
-            }
-            if (e2x == map.length) {
-                e2x = 0;
-            }
-            if (e1y == -1) {
-                e1y = map.length - 1;
-            }
-            if (e1y == map.length) {
-                e1y = 0;
-            }
-            if (e2y == -1) {
-                e2y = map.length - 1;
-            }
-            if (e2y == map.length) {
-                e2y = 0;
-            }
-            if (gx == playerX & gy == playerY) {
-                System.out.println("you win");
-                return;
-
-            }
-            if ((playerX == e1x && playerY == e1y)
-                    || (playerX == e2x && playerY == e2y)) {
-                System.out.println("you lose");
+            if (foodFirstX == 0 && foodFirstY == 0 && foodSecondX == 0 && foodSecondY == 0) {
+                System.out.println("YOU WON");
                 return;
             }
 
+            if ((playerX == enemyFirstX && playerY == enemyFirstY)
+                    || (playerX == enemySecondX && playerY == enemySecondY))
+//	                    || (e1x == playerX && e1y == playerY)
+//	                    || (e2x == playerX && e2y == playerY))
+            {
+                count -= 1;
+                if (count == 1) {
+                    System.out.println("LIFE LEFT : 1");
+                }
+
+                if (count == 0) {
+//	                System.out.println("LIFE LEFT : 0");
+
+                    System.out.println("YOU LOST");
+                    return;
+                }
+            }
+
+
+            map[enemyFirstX][enemyFirstY] = "*";
+            map[enemySecondX][enemySecondY] = "*";
+            map[foodFirstX][foodFirstY] = "F";
+            map[foodSecondX][foodSecondY] = "F";
+            map[0][0] = "*";
+
+
+            enemyFirstX = (enemyFirstX + 1) % map.length;
+            map[enemyFirstX][enemyFirstY] = "G";
+
+
+            enemySecondY = (enemySecondY + 1) % map.length;
+            map[enemySecondX][enemySecondY] = "G";
             map[playerX][playerY] = "P";
-            map[e1x][e1y] = "E";
-            map[e2x][e2y] = "E";
+
         }
+    }
+
+    static Point random(ArrayList<Point> list) {
+        Random random = new Random();
+        int index = random.nextInt(list.size());
+        return list.remove(index);
     }
 }
